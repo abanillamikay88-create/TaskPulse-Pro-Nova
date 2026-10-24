@@ -1,0 +1,795 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101321">
+<title>TaskPulse Nova | Student Planner</title>
+
+<style>
+:root {
+  --bg: #0b0e17;
+  --panel: #141927;
+  --panel2: #1c2435;
+  --text: #f4f6ff;
+  --muted: #9ba6bc;
+  --accent: #8b7cff;
+  --cyan: #55e0d0;
+  --border: #293249;
+  --danger: #ff7185;
+  --success: #51d6a0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at top right, #25204c 0, transparent 38%),
+    var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+}
+
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+
+.app {
+  width: min(1100px, 100%);
+  margin: auto;
+  padding: 22px 16px 50px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.logo {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  color: #101321;
+  font-size: 25px;
+  font-weight: 900;
+}
+
+h1 { font-size: 21px; margin: 0; }
+.brand p { color: var(--muted); margin: 3px 0 0; font-size: 12px; }
+
+.xp {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  padding: 10px 13px;
+  border-radius: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.hero {
+  background: linear-gradient(120deg, #242044, #172c3a);
+  border: 1px solid #39345f;
+  border-radius: 24px;
+  padding: 25px 22px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.eyebrow {
+  color: var(--cyan);
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.hero h2 {
+  font-size: clamp(26px, 6vw, 38px);
+  line-height: 1.13;
+  margin: 12px 0;
+  max-width: 540px;
+}
+
+.hero p {
+  color: #c5cce0;
+  line-height: 1.6;
+  max-width: 530px;
+  margin-bottom: 0;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 28px 0 14px;
+}
+
+.section-title h2 { margin: 0; font-size: 19px; }
+.muted { color: var(--muted); font-size: 13px; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat, .card {
+  background: rgba(20,25,39,.95);
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  padding: 17px;
+  min-width: 0;
+}
+
+.stat-icon { font-size: 22px; }
+.stat-value { font-size: 27px; font-weight: 850; margin-top: 9px; }
+.stat-label { color: var(--muted); font-size: 12px; margin-top: 3px; }
+
+.progress-track {
+  height: 8px;
+  background: #2a3043;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 13px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  transition: width .35s ease;
+  border-radius: inherit;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, .8fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.card h3 { margin: 0 0 16px; font-size: 17px; }
+
+.field { margin-bottom: 13px; }
+label {
+  display: block;
+  color: #c5cce0;
+  font-size: 12px;
+  margin-bottom: 7px;
+}
+
+input, select {
+  width: 100%;
+  background: #0d1220;
+  border: 1px solid #303a51;
+  border-radius: 11px;
+  padding: 12px;
+  color: var(--text);
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px #8b7cff22;
+}
+
+button {
+  border: 0;
+  border-radius: 11px;
+  padding: 11px 15px;
+  color: var(--text);
+  font-weight: 750;
+  transition: transform .15s, opacity .15s;
+}
+
+button:active { transform: scale(.97); }
+
+.primary {
+  width: 100%;
+  background: linear-gradient(100deg, #8b7cff, #6b9dff);
+  color: #0c1020;
+}
+
+.secondary {
+  background: #262e43;
+  border: 1px solid #3a4560;
+}
+
+.danger {
+  background: #482633;
+  color: #ffb5c0;
+}
+
+.task-list {
+  display: grid;
+  gap: 10px;
+}
+
+.task {
+  background: #101624;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  animation: appear .25s ease;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.task-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.check {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  accent-color: var(--success);
+  margin-top: 2px;
+}
+
+.task-name { font-weight: 750; overflow-wrap: anywhere; }
+.completed .task-name {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.task-meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+  margin-top: 5px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 7px;
+  font-size: 10px;
+  font-weight: 850;
+  margin-top: 8px;
+}
+
+.high { background: #492631; color: #ff9bab; }
+.medium { background: #493d20; color: #ffd77e; }
+.low { background: #203c36; color: #8be7c0; }
+.overdue { color: var(--danger); }
+
+.task-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.task-actions button { font-size: 12px; padding: 8px 11px; }
+
+.empty {
+  padding: 27px 12px;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed #394159;
+  border-radius: 13px;
+  line-height: 1.7;
+}
+
+.timer-card { text-align: center; }
+.timer {
+  font-size: clamp(42px, 11vw, 58px);
+  font-weight: 850;
+  letter-spacing: -2px;
+  margin: 15px 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-mode { color: var(--cyan); font-size: 12px; font-weight: 800; }
+.timer-actions { display: flex; gap: 8px; }
+.timer-actions button { flex: 1; }
+
+.mission {
+  background: #1d2738;
+  border-radius: 12px;
+  padding: 13px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+footer {
+  text-align: center;
+  margin-top: 35px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  width: max-content;
+  max-width: 90%;
+  background: #e8fff6;
+  color: #102b23;
+  padding: 12px 17px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 750;
+  box-shadow: 0 10px 40px #0007;
+  z-index: 10;
+}
+
+.hidden { display: none !important; }
+
+@media (max-width: 650px) {
+  .app { padding: 17px 13px 35px; }
+  .hero { padding: 22px 18px; }
+  .layout { grid-template-columns: 1fr; }
+  .stats { gap: 8px; }
+  .stat { padding: 12px 10px; }
+  .stat-value { font-size: 23px; }
+  .stat-label { font-size: 11px; }
+  .card { padding: 15px; }
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <div class="logo">✦</div>
+      <div>
+        <h1>TaskPulse <span style="color:#9d91ff">Nova</span></h1>
+        <p>YOUR ACADEMIC PRODUCTIVITY SPACE</p>
+      </div>
+    </div>
+    <div class="xp">⭐ <span id="xp">0</span> XP</div>
+  </header>
+
+  <section class="hero">
+    <div class="eyebrow">✦ Your next chapter starts here</div>
+    <h2>Make time for what <span style="color:#a99cff">matters.</span></h2>
+    <p>Organize your schoolwork, keep track of deadlines, and build consistent study habits one task at a time.</p>
+  </section>
+
+  <div class="section-title">
+    <h2>Your overview</h2>
+    <span class="muted" id="today"></span>
+  </div>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-icon">📚</div>
+      <div class="stat-value" id="total">0</div>
+      <div class="stat-label">Total tasks</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon">✅</div>
+      <div class="stat-value" id="done">0</div>
+      <div class="stat-label">Completed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon">⏳</div>
+      <div class="stat-value" id="remaining">0</div>
+      <div class="stat-label">Remaining</div>
+    </div>
+  </section>
+
+  <div class="card" style="margin-top:13px">
+    <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+      <strong style="font-size:13px">Overall progress</strong>
+      <span id="progressText" class="muted">0% complete</span>
+    </div>
+    <div class="progress-track"><div id="progress" class="progress-fill"></div></div>
+  </div>
+
+  <div class="layout">
+    <section>
+      <div class="section-title">
+        <h2>My tasks</h2>
+        <span class="muted">Stay one step ahead</span>
+      </div>
+
+      <div class="card">
+        <h3>＋ Create a task</h3>
+        <form id="taskForm">
+          <div class="field">
+            <label for="taskName">Task name</label>
+            <input id="taskName" maxlength="100" placeholder="e.g. Review my science notes" required>
+          </div>
+
+          <div class="field">
+            <label for="subject">Subject</label>
+            <input id="subject" maxlength="60" placeholder="e.g. Practical Research 2" required>
+          </div>
+
+          <div class="field">
+            <label for="deadline">Deadline</label>
+            <input id="deadline" type="date" required>
+          </div>
+
+          <div class="field">
+            <label for="priority">Priority</label>
+            <select id="priority">
+              <option value="High">High — Do first</option>
+              <option value="Medium" selected>Medium — Plan it</option>
+              <option value="Low">Low — When available</option>
+            </select>
+          </div>
+
+          <button class="primary" type="submit">＋ Add to my tasks</button>
+        </form>
+      </div>
+
+      <div class="section-title">
+        <h2>Task list</h2>
+        <select id="filter" aria-label="Filter tasks" style="width:auto;max-width:145px;padding:8px">
+          <option value="all">All tasks</option>
+          <option value="active">Active</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <div id="taskList" class="task-list"></div>
+    </section>
+
+    <aside>
+      <div class="section-title"><h2>Focus room</h2></div>
+      <div class="card timer-card">
+        <div class="timer-mode" id="timerMode">POMODORO FOCUS</div>
+        <div class="timer" id="timer">25:00</div>
+        <p class="muted">One focused session at a time.</p>
+        <div class="timer-actions">
+          <button class="primary" id="startTimer" type="button">▶ Start</button>
+          <button class="secondary" id="resetTimer" type="button">↻ Reset</button>
+        </div>
+      </div>
+
+      <div class="section-title"><h2>Daily mission</h2></div>
+      <div class="card">
+        <div class="mission">
+          🎯 <strong>Complete one task today</strong><br>
+          Every finished task is a step forward.
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="missionProgress"></div>
+        </div>
+        <p class="muted" id="missionText">0 / 1 task completed today</p>
+      </div>
+
+      <div class="section-title"><h2>Smart reminder</h2></div>
+      <div class="card">
+        <p style="line-height:1.8;font-size:13px;margin:0">
+          💡 <strong>Start small.</strong><br>
+          Break a big assignment into manageable steps. Begin with one action you can complete today.
+        </p>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <strong>TaskPulse Nova</strong><br>
+    A student productivity project.<br>
+    Progress over perfection. One task at a time.
+  </footer>
+</div>
+
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+  const STORAGE_KEY = "taskpulse_nova_tasks_v1";
+  const XP_KEY = "taskpulse_nova_xp_v1";
+
+  let tasks = [];
+  let xp = 0;
+  let toastTimeout;
+  let timerInterval = null;
+  let remainingSeconds = 25 * 60;
+  let timerRunning = false;
+
+  try {
+    const savedTasks = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    tasks = Array.isArray(savedTasks) ? savedTasks.filter(t =>
+      t && typeof t.id === "string" &&
+      typeof t.name === "string" &&
+      typeof t.subject === "string" &&
+      typeof t.deadline === "string" &&
+      typeof t.completed === "boolean"
+    ) : [];
+    xp = Math.max(0, Number(localStorage.getItem(XP_KEY)) || 0);
+  } catch (error) {
+    tasks = [];
+    xp = 0;
+  }
+
+  const todayString = () => {
+    const d = new Date();
+    const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+    return local.toISOString().slice(0, 10);
+  };
+
+  $("today").textContent = new Date().toLocaleDateString(undefined, {
+    weekday: "short", month: "short", day: "numeric"
+  });
+
+  $("deadline").min = todayString();
+  $("xp").textContent = xp;
+
+  function save() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+      localStorage.setItem(XP_KEY, String(xp));
+    } catch (error) {
+      showToast("Could not save data in this browser.");
+    }
+  }
+
+  function showToast(message) {
+    const el = $("toast");
+    el.textContent = message;
+    el.classList.remove("hidden");
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => el.classList.add("hidden"), 2400);
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#39;"
+    })[ch]);
+  }
+
+  function formatDate(date) {
+    const d = new Date(date + "T12:00:00");
+    return Number.isNaN(d.getTime())
+      ? date
+      : d.toLocaleDateString(undefined, {
+          month: "short", day: "numeric", year: "numeric"
+        });
+  }
+
+  function render() {
+    const done = tasks.filter(t => t.completed).length;
+    const remaining = tasks.length - done;
+    const percent = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+
+    $("total").textContent = tasks.length;
+    $("done").textContent = done;
+    $("remaining").textContent = remaining;
+    $("progress").style.width = percent + "%";
+    $("progressText").textContent = percent + "% complete";
+    $("xp").textContent = xp;
+
+    const completedToday = tasks.some(t =>
+      t.completed && t.completedDate === todayString()
+    );
+
+    $("missionProgress").style.width = completedToday ? "100%" : "0%";
+    $("missionText").textContent = completedToday
+      ? "1 / 1 task completed today — mission complete!"
+      : "0 / 1 task completed today";
+
+    const filter = $("filter").value;
+    const visible = tasks.filter(t => {
+      if (filter === "active") return !t.completed;
+      if (filter === "completed") return t.completed;
+      return true;
+    }).sort((a, b) => {
+      if (a.completed !== b.completed) return Number(a.completed) - Number(b.completed);
+      const priority = { High: 0, Medium: 1, Low: 2 };
+      return priority[a.priority] - priority[b.priority] ||
+        a.deadline.localeCompare(b.deadline);
+    });
+
+    const list = $("taskList");
+
+    if (!visible.length) {
+      list.innerHTML = '<div class="empty">🌱<br><strong>No tasks here yet</strong><br>Add your first task and start building momentum.</div>';
+      return;
+    }
+
+    list.innerHTML = visible.map(t => {
+      const isOverdue = !t.completed && t.deadline < todayString();
+      const badgeClass = String(t.priority).toLowerCase();
+      return `
+        <article class="task ${t.completed ? "completed" : ""}">
+          <div class="task-top">
+            <input class="check" type="checkbox"
+              data-action="toggle" data-id="${escapeHTML(t.id)}"
+              aria-label="Mark ${escapeHTML(t.name)} as completed"
+              ${t.completed ? "checked" : ""}>
+            <div style="min-width:0;flex:1">
+              <div class="task-name">${escapeHTML(t.name)}</div>
+              <div class="task-meta">
+                📘 ${escapeHTML(t.subject)}<br>
+                📅 Deadline: ${escapeHTML(formatDate(t.deadline))}
+                ${isOverdue ? '<br><span class="overdue">⚠ Overdue</span>' : ""}
+              </div>
+              <span class="badge ${badgeClass}">${escapeHTML(t.priority)} priority</span>
+            </div>
+          </div>
+          <div class="task-actions">
+            <button class="secondary" data-action="edit" data-id="${escapeHTML(t.id)}">✎ Edit</button>
+            <button class="danger" data-action="delete" data-id="${escapeHTML(t.id)}">Delete</button>
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  $("taskForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    const name = $("taskName").value.trim();
+    const subject = $("subject").value.trim();
+    const deadline = $("deadline").value;
+    const priority = $("priority").value;
+
+    if (!name || !subject || !deadline) {
+      showToast("Please complete all task fields.");
+      return;
+    }
+
+    if (deadline < todayString()) {
+      showToast("Please choose today or a future deadline.");
+      return;
+    }
+
+    tasks.push({
+      id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random()),
+      name, subject, deadline, priority,
+      completed: false,
+      completedDate: null,
+      createdAt: new Date().toISOString()
+    });
+
+    save();
+    render();
+    event.target.reset();
+    $("priority").value = "Medium";
+    $("deadline").min = todayString();
+    showToast("Task added successfully! ✨");
+  });
+
+  $("taskList").addEventListener("change", event => {
+    const checkbox = event.target.closest('[data-action="toggle"]');
+    if (!checkbox) return;
+
+    const task = tasks.find(t => t.id === checkbox.dataset.id);
+    if (!task) return;
+
+    if (checkbox.checked && !task.completed) {
+      task.completed = true;
+      task.completedDate = todayString();
+      xp += 10;
+      showToast("Task completed! +10 XP ⭐");
+    } else if (!checkbox.checked && task.completed) {
+      task.completed = false;
+      task.completedDate = null;
+      xp = Math.max(0, xp - 10);
+      showToast("Task reopened.");
+    }
+
+    save();
+    render();
+  });
+
+  $("taskList").addEventListener("click", event => {
+    const button = event.target.closest("button[data-action]");
+    if (!button) return;
+
+    const task = tasks.find(t => t.id === button.dataset.id);
+    if (!task) return;
+
+    if (button.dataset.action === "delete") {
+      if (!confirm("Delete this task permanently?")) return;
+      tasks = tasks.filter(t => t.id !== task.id);
+      save();
+      render();
+      showToast("Task deleted.");
+    }
+
+    if (button.dataset.action === "edit") {
+      const name = prompt("Edit task name:", task.name);
+      if (name === null) return;
+      const subject = prompt("Edit subject:", task.subject);
+      if (subject === null) return;
+      const deadline = prompt("Edit deadline (YYYY-MM-DD):", task.deadline);
+      if (deadline === null) return;
+
+      if (!name.trim() || !subject.trim() ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(deadline) ||
+          Number.isNaN(new Date(deadline + "T12:00:00").getTime())) {
+        showToast("Please enter valid task details.");
+        return;
+      }
+
+      task.name = name.trim();
+      task.subject = subject.trim();
+      task.deadline = deadline;
+      save();
+      render();
+      showToast("Task updated.");
+    }
+  });
+
+  $("filter").addEventListener("change", render);
+
+  function updateTimerDisplay() {
+    const min = Math.floor(remainingSeconds / 60);
+    const sec = remainingSeconds % 60;
+    $("timer").textContent =
+      String(min).padStart(2, "0") + ":" + String(sec).padStart(2, "0");
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerRunning = false;
+    $("startTimer").textContent = "▶ Start";
+  }
+
+  $("startTimer").addEventListener("click", () => {
+    if (timerRunning) {
+      stopTimer();
+      showToast("Focus session paused.");
+      return;
+    }
+
+    if (remainingSeconds <= 0) remainingSeconds = 25 * 60;
+
+    timerRunning = true;
+    $("startTimer").textContent = "Ⅱ Pause";
+
+    timerInterval = setInterval(() => {
+      remainingSeconds--;
+      updateTimerDisplay();
+
+      if (remainingSeconds <= 0) {
+        stopTimer();
+        showToast("Focus session complete! Take a short break. 🎉");
+        remainingSeconds = 5 * 60;
+        $("timerMode").textContent = "SHORT BREAK";
+        updateTimerDisplay();
+      }
+    }, 1000);
+  });
+
+  $("resetTimer").addEventListener("click", () => {
+    stopTimer();
+    remainingSeconds = 25 * 60;
+    $("timerMode").textContent = "POMODORO FOCUS";
+    updateTimerDisplay();
+    showToast("Focus timer reset.");
+  });
+
+  render();
+  updateTimerDisplay();
+})();
+</script>
+</body>
+</html>
+```
